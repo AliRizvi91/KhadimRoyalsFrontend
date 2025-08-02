@@ -109,6 +109,7 @@ const Navbar = () => {
   }, [isMenuOpen, animate, scope])
 
   const avatarPath = user?.image
+  
 
   return (
     <div ref={scope} className="relative">
@@ -129,12 +130,16 @@ const Navbar = () => {
         </div>
 
         <div className="absolute inset-0 flex justify-end items-center w-full h-[6rem]">
-          <div className={`pointer-events-auto relative ${lang === 'ar' ? 'sm:-right-38 -right-34' : 'sm:right-38 right-34'} cursor-pointer`}>
+          <motion.div
+          initial={{opacity:1}}
+          animate={isOpen?{opacity:0}:{opacity:1}}
+          transition={{duration:0.9}}
+           className={`pointer-events-auto relative ${lang === 'ar' ? 'sm:-right-38 -right-34' : 'sm:right-38 right-34'} cursor-pointer`}>
             <BorderedAvatar path={avatarPath} />
             <span className='relative z-500'>
               {ModalOfAuth && <AuthModal />}
             </span>
-          </div>
+          </motion.div>
         </div>
       </div>
 
