@@ -1,0 +1,14 @@
+/* window-mask */
+.window-mask {
+  mask-image: url("/assets/Images/Mask1.svg"), linear-gradient(black, black);
+  mask-composite: exclude;
+  mask-repeat: no-repeat;
+  mask-size: 327px 500px, auto;
+  mask-position: right 5rem top 0rem, center;
+  /* -webkit-mask-image: url("/assets/Images/Window.png"), linear-gradient(black, black);
+  -webkit-mask-composite: xor; 
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 320px auto, auto; */
+  -webkit-mask-position: center top 0rem, center;
+
+}
