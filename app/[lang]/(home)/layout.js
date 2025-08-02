@@ -18,7 +18,7 @@ export const metadata = {
   title: 'Khadim Royals',
   description: 'Luxury hotel experience with premium services',
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_FRONTEND_BASEURL || 'http://localhost:3000'
+    process.env.NEXT_PUBLIC_FRONTEND_BASEURL 
   ),
   openGraph: {
     title: 'Khadim Royals',
