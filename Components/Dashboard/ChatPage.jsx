@@ -73,7 +73,6 @@ const ChatPage = () => {
       };
 
       const handleOnlineUsers = (onlineUserIds) => {
-        console.log('Online user IDs:', onlineUserIds);
         setOnlineUsers(onlineUserIds);
       };
 

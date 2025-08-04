@@ -1,14 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { BsChatDots, BsThreeDotsVertical } from 'react-icons/bs';
 import { FiUsers, FiSettings } from 'react-icons/fi';
 import { IoMdNotifications } from 'react-icons/io';
 import SidebarIcon from './SidebarIcon';
-
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 const Sidebar = () => {
+  const router = useRouter(); // Initialize the router
   const sidebarIcons = [
     { icon: BsChatDots, active: true },
     { icon: FiUsers, active: false },
@@ -28,12 +28,12 @@ const Sidebar = () => {
 
       {/* User Avatar at bottom */}
       <div className="transform rotate-90 relative my-20 ">
-        <Link
-          href="/"
-          className="uppercase manrope sm:text-3xl text-2xl font-extrabold text-white relative -left-3"
+        <button
+          onClick={() => router.push('/')}
+          className="uppercase manrope sm:text-3xl text-2xl font-extrabold text-white relative -left-3 cursor-pointer"
         >
           Khadim<span className='sm:text-[12px] text-[10px]'>Royals</span>.
-        </Link>
+        </button>
       </div>
       <div className="relative w-[1px] h-[80%] bg-white"/>
     </motion.div>

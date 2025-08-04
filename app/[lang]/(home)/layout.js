@@ -8,8 +8,6 @@ import { melodrama, manrope } from '@/Components/Utilities/Fonts/fonts';
 // Css
 import '../../globals.css'
 
-
-
 export async function generateStaticParams() {
   return locales.map((locale) => ({ lang: locale }));
 }
@@ -28,21 +26,15 @@ export const metadata = {
 };
 
 export default function RootLayout({ children, params }) {
-
   const { lang } = params;
-  const direction = lang === 'ar' ? 'rtl' : 'ltr';
+  const direction = lang === 'ar' ? 'rtl' : 'ltr';           
   
   return (
-    <html 
-      lang={lang} 
-      dir={direction}
-      className={`${manrope.variable} ${melodrama.variable}`}
-    >
-      <body className="min-h-screen flex flex-col">
-        <ClientLayoutHome params={lang}>
-          {children}
-        </ClientLayoutHome>
-      </body>
-    </html>
+    // Remove the <html> and <body> tags - Next.js provides them automatically
+    <div className={`${manrope.variable} ${melodrama.variable} min-h-screen flex flex-col`} dir={direction}>
+      <ClientLayoutHome params={lang}>
+        {children}
+      </ClientLayoutHome>
+    </div>
   );
 }

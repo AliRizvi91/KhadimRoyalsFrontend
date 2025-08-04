@@ -35,6 +35,7 @@ const RPEmail = () => {
 
   const handleLinkClick = () => {
     setIsNavigating(true);
+    window.location.href = '/'; // This will force a full page reload
   };
 
   const handleSubmit = async (e) => {
@@ -174,9 +175,9 @@ const RPEmail = () => {
         >
           <p className="text-center text-sm ms-2">
             Remember your password?{' '}
-            <Link href="/" onClick={handleLinkClick} className="text-[#0f1210] font-black hover:underline">
+            <button onClick={handleLinkClick} className="text-[#0f1210] font-black hover:underline">
               Login
-            </Link>
+            </button>
           </p>
         </motion.div>
         <motion.div

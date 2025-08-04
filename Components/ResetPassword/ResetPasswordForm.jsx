@@ -29,6 +29,7 @@ const ResetPasswordForm = () => {
   // Handle navigation state
   const handleLinkClick = () => {
     setIsNavigating(true);
+    window.location.href = '/'; // This will force a full page reload
   };
 
   const playNotificationSound = async () => {
@@ -89,7 +90,7 @@ const ResetPasswordForm = () => {
           label: 'Login now',
           onClick: () => {
             setIsNavigating(true);
-            router.push('/');
+            window.location.href = '/'; // This will force a full page reload
           },
         },
       });
@@ -232,13 +233,12 @@ const ResetPasswordForm = () => {
         >
           <p className="text-center text-sm ms-2">
             Remember your password?{' '}
-            <Link
-              href="/"
+            <button
               onClick={handleLinkClick}
-              className="text-[#0f1210] font-black hover:underline"
+              className="text-[#0f1210] font-black hover:underline cursor-pointer"
             >
               Login
-            </Link>
+            </button>
           </p>
         </motion.div>
 

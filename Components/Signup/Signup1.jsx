@@ -334,9 +334,9 @@ const LoginLink = () => (
   <div className="flex justify-start items-start w-full">
     <p className="text-center text-sm ms-2">
       Already have an account?{' '}
-      <Link href="/" className="text-[#0f1210] font-black hover:underline">
+      <button onClick={()=> window.location.href = '/'} className="text-[#0f1210] font-black hover:underline">
         Login
-      </Link>
+      </button>
     </p>
   </div>
 );
