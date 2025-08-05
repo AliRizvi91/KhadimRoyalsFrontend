@@ -113,21 +113,26 @@ function BookingPart1() {
         return;
       }
 
-      const loadingToast = toast.loading('Processing Booking...', {
-        description: 'This may take a few seconds.',
-        duration: Infinity,
-      });
-
-      const resultAction = await dispatch(postBook(booking));
-      
-      if (postBook.fulfilled.match(resultAction)) {
-        await playNotificationSound();
-        toast.dismiss(loadingToast);
-        toast.success('Booking Successful!');
-        router.push(`/room/${commingCategoryId}`);
-      } else {
-        throw new Error(resultAction.error?.message || 'Booking failed');
+      if(user){
+        const loadingToast = toast.loading('Processing Booking...', {
+          description: 'This may take a few seconds.',
+          duration: Infinity,
+        });
+        const resultAction = await dispatch(postBook(booking));
+        
+        if (postBook.fulfilled.match(resultAction)) {
+          await playNotificationSound();
+          toast.dismiss(loadingToast);
+          toast.success('Booking Successful!');
+          router.push(`/room/${commingCategoryId}`);
+        } else {
+          throw new Error(resultAction.error?.message || 'Booking failed');
+        }
+      }else{
+        toast.error('🔒 Please login to continue')
+        return;
       }
+
     } catch (error) {
       await playNotificationSound();
       toast.dismiss(toast.loading());
