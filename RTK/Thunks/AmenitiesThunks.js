@@ -37,32 +37,59 @@ export const postAmenity = createAsyncThunk(
     }
   );
 //------ postAmenitylanguage ------
-export const postAmenitylanguage = createAsyncThunk(
-  'Amenity/language',
+export const postAmenityLanguage = createAsyncThunk(
+  'amenity/language',
   async (amenityNames, { rejectWithValue }) => {
     try {
-      // Convert array of names to the format backend expects
+      // Validate input
+      if (!Array.isArray(amenityNames)) {
+        throw new Error('Input must be an array of amenity names');
+      }
+
+      // Prepare request data
       const requestData = amenityNames.map(name => ({
-        key: name,
-        value: name
-      }));
+        key: name.trim(),
+        value: name.trim()
+      })).filter(item => item.key); // Filter out empty names
+
+      if (requestData.length === 0) {
+        throw new Error('No valid amenity names provided');
+      }
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/language/update-languages`,
-        { Home: requestData }, // Wrap in Home object as expected by backend
+        { Home: requestData },
         {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Add auth if needed
           },
+          timeout: 30000 // 30 seconds timeout
         }
       );
 
       return response.data;
     } catch (error) {
       if (error.response) {
-        return rejectWithValue(error.response.data);
+        // Backend returned an error response
+        return rejectWithValue({
+          status: error.response.status,
+          message: error.response.data?.error || 'Failed to update translations',
+          details: error.response.data?.details
+        });
+      } else if (error.request) {
+        // Request was made but no response received
+        return rejectWithValue({
+          status: 503,
+          message: 'Service unavailable - no response from server'
+        });
+      } else {
+        // Something happened in setting up the request
+        return rejectWithValue({
+          status: 400,
+          message: error.message || 'Failed to process request'
+        });
       }
-      return rejectWithValue(error.message);
     }
   }
 );

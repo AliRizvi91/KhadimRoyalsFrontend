@@ -21,7 +21,7 @@ import CloudinarySVG from '../Custom/CloudinarySVG'
 import BubbleButton from '../Custom/BubbleButton'
 
 // RTK
-import { getAllAmenity, postAmenitylanguage } from '@/RTK/Thunks/AmenitiesThunks'
+import { getAllAmenity, postAmenityLanguage } from '@/RTK/Thunks/AmenitiesThunks'
 
 // Constants
 const GRID_BORDERS = {
@@ -78,17 +78,25 @@ function Amenities({ ColorChange }) {
   }, [dispatch])
 
   useEffect(() => {
-    if (allAmenityNames.length > 0) {
-      const updateAmenityLanguages = async () => {
-        try {
-          await dispatch(postAmenitylanguage(allAmenityNames))
-        } catch (error) {
-          console.error("Error updating amenity languages:", error)
+    const updateAmenityLanguages = async () => {
+      try {
+        if (allAmenityNames?.length > 0) {
+          // Safely extract names with null checks
+          const amenityNames = allAmenityNames
+            .map(amenity => amenity?.name)
+            .filter(name => name != null);
+          
+          if (amenityNames.length > 0) {
+            await dispatch(postAmenityLanguage(amenityNames)).unwrap();
+          }
         }
+      } catch (error) {
+        console.error('Error updating amenity languages:', error);
       }
-      updateAmenityLanguages()
-    }
-  }, [dispatch, allAmenityNames])
+    };
+
+    updateAmenityLanguages();
+  }, [allAmenityNames, dispatch]);
 
   // Loading and error states
   if (loading) return (
