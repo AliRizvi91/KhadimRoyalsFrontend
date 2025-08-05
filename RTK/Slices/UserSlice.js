@@ -106,10 +106,11 @@ const userSlice = createSlice({
       .addCase(getme.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+
+        // Clear token if unauthorized
         if (action.payload?.status === 401 || action.payload?.status === 402) {
-          // Clear invalid token
           state.token = null;
-          if (typeof window !== 'undefined') {
+          if (typeof window !== "undefined") {
             localStorage.removeItem("token");
           }
         }

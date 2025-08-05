@@ -128,14 +128,64 @@ export const signup = createAsyncThunk("signup/User", async (formData) => {
 });
 
 
-export const getme = createAsyncThunk("getme/User", async () => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/user/profile`, {
-    headers: {
-      authorization: `Bearer ${localStorage.getItem("token")}`
+// export const getme = createAsyncThunk("getme/User", async () => {
+//   const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/user/profile`, {
+//     headers: {
+//       authorization: `Bearer ${localStorage.getItem("token")}`
+//     }
+//   });
+//   return response.data;
+// });
+
+export const getme = createAsyncThunk(
+  "user/getme",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      // 1. Check if token exists (early exit if missing)
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      // 2. Make the API request
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Fixed capitalization (some APIs need "Authorization" instead of "authorization")
+          },
+        }
+      );
+
+      return response.data; // Return user data on success
+    } catch (error) {
+      // 3. Handle Axios errors (401/402/500)
+      if (error.response) {
+        // 402 Payment Required? Likely a backend misconfiguration
+        if (error.response.status === 402 || error.response.status === 401) {
+          localStorage.removeItem("token"); // Clear invalid token
+          return rejectWithValue({
+            message: "Session expired. Please log in again.",
+            status: error.response.status,
+          });
+        }
+
+        // Other API errors (500, 404, etc.)
+        return rejectWithValue({
+          message: error.response.data?.message || "Failed to fetch profile",
+          status: error.response.status,
+        });
+      }
+
+      // 4. Network errors (no internet, CORS, etc.)
+      return rejectWithValue({
+        message: error.message || "Network error. Check your connection.",
+      });
     }
-  });
-  return response.data;
-});
+  }
+);
+
 
 
 export const userUpdate = createAsyncThunk("Update/User", async ({ id, formData }, { rejectWithValue }) => {
