@@ -31,6 +31,11 @@ function BookingPart1() {
   const { user } = useSelector((state) => state.StoreOfUser);
   const [booking, setBooking] = useState(INITIAL_BOOKING_STATE);
 
+  // Get base URL based on environment
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://khadim-royals-backend.vercel.app' 
+    : 'http://localhost:3000';
+
   // Memoized URL parameters
   const urlParams = useMemo(() => ({
     startDate: searchParams.get('startDate'),
@@ -55,52 +60,7 @@ function BookingPart1() {
     }
   }, [urlParams, user?._id]);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setBooking(prev => ({ ...prev, [name]: value }));
-  }, []);
-
-  const handleNumberChange = useCallback((e) => {
-    const { name, value } = e.target;
-    const numValue = Number(value);
-    if (!isNaN(numValue)) {
-      setBooking(prev => ({ ...prev, [name]: numValue }));
-    }
-  }, []);
-
-  const playNotificationSound = useCallback(async () => {
-    try {
-      const sound = new Audio('/assets/Sounds/notification.mp3');
-      await sound.play().catch(e => console.warn('Audio play interrupted:', e));
-    } catch (error) {
-      console.error('Error playing sound:', error);
-    }
-  }, []);
-
-  const validateBooking = useCallback(async () => {
-    if (!booking.startDate || !booking.endDate || !booking.guests) {
-      await playNotificationSound();
-      toast.error('Missing required fields', {
-        description: 'Please fill in all required fields',
-        duration: 5000,
-      });
-      return false;
-    }
-
-    const start = new Date(booking.startDate);
-    const end = new Date(booking.endDate);
-
-    if (start >= end) {
-      await playNotificationSound();
-      toast.error('Invalid dates', {
-        description: 'Check-out date must be after check-in date',
-        duration: 5000,
-      });
-      return false;
-    }
-
-    return true;
-  }, [booking, playNotificationSound]);
+  // ... [keep all other existing functions unchanged until handleSubmit]
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,7 +78,12 @@ function BookingPart1() {
           description: 'This may take a few seconds.',
           duration: Infinity,
         });
-        const resultAction = await dispatch(postBook(booking));
+        
+        // Ensure we're making a POST request with the correct URL
+        const resultAction = await dispatch(postBook({
+          ...booking,
+          baseUrl // Pass the base URL to your thunk
+        }));
         
         if (postBook.fulfilled.match(resultAction)) {
           await playNotificationSound();
@@ -128,11 +93,10 @@ function BookingPart1() {
         } else {
           throw new Error(resultAction.error?.message || 'Booking failed');
         }
-      }else{
+      } else {
         toast.error('🔒 Please login to continue')
         return;
       }
-
     } catch (error) {
       await playNotificationSound();
       toast.dismiss(toast.loading());
