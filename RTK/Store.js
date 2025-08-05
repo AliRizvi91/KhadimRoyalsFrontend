@@ -10,7 +10,7 @@ import BookReducer from './Slices/BookSlice';
 import PaymentReducer from './Slices/PaymentSlice';
 import MessageReducer from './Slices/MessagesSlice';
 
-export const store = configureStore({
+export const useStore  = configureStore({
   reducer: {
     StoreOfUser: userReducer,
     StoreOfgallery: galleryReducer,
