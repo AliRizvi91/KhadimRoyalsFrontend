@@ -8,7 +8,7 @@ function AuthenticateUser({ children }) {
 
   useEffect(() => {
     // Only fetch user data if we have a token but no user data and not already loading
-    if (token && !user && !loading) {
+    if (token !== null && user === null && !loading) {
       dispatch(getme()).catch(err => {
         console.error('Failed to fetch user data:', err);
       });
