@@ -113,7 +113,7 @@ function BookingPart1() {
         return;
       }
 
-      if(user){
+      if(user !== null){
         const loadingToast = toast.loading('Processing Booking...', {
           description: 'This may take a few seconds.',
           duration: Infinity,
