@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { login, TokenVerification, signup, getme, userUpdate, getAllUsers } from "../Thunks/UserThunks";
 import { toast } from "sonner";
 
-
 // Helper function to safely access localStorage
 const getInitialToken = () => {
   if (typeof window !== 'undefined') {
@@ -40,9 +39,9 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-setAuthModal: (state, action) => {
-    state.ModalOfAuth = action.payload; // Directly set to the provided value
-},
+    setAuthModal: (state, action) => {
+      state.ModalOfAuth = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,7 +61,6 @@ setAuthModal: (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      // Add this case to your extraReducers
       .addCase(TokenVerification.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -87,7 +85,7 @@ setAuthModal: (state, action) => {
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
         state.token = action.payload.token;
         if (typeof window !== 'undefined') {
           localStorage.setItem("token", action.payload.token);
@@ -108,6 +106,13 @@ setAuthModal: (state, action) => {
       .addCase(getme.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        if (action.payload?.status === 401 || action.payload?.status === 402) {
+          // Clear invalid token
+          state.token = null;
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem("token");
+          }
+        }
       })
       .addCase(userUpdate.pending, (state) => {
         state.loading = true;
@@ -136,5 +141,5 @@ setAuthModal: (state, action) => {
   },
 });
 
-export const { logout, setCredentials , setAuthModal } = userSlice.actions;
+export const { logout, setCredentials, setAuthModal } = userSlice.actions;
 export default userSlice.reducer;

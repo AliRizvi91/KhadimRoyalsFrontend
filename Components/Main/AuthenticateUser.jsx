@@ -7,13 +7,16 @@ function AuthenticateUser({ children }) {
   const { token, user, loading } = useSelector((state) => state.StoreOfUser);
 
   useEffect(() => {
-    // Only fetch user data if we have a token but no user data and not already loading
-    if (token !== null || 'undefined' && user === null && !loading) {
-      dispatch(getme()).catch(err => {
-        console.error('Failed to fetch user data:', err);
-      });
+    // Only run if we have a token but no user data
+    if (token && !user && !loading) {
+      dispatch(getme())
+        .unwrap()
+        .catch(err => {
+          console.error('Failed to fetch user data:', err);
+          // Optionally dispatch logout action here if the token is invalid
+        });
     }
-  }, [dispatch, token]); // Removed 'user' from dependencies to prevent loop
+  }, [dispatch, token]); // Only depend on token and dispatch
 
   return <>{children}</>;
 }
