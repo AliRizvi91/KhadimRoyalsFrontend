@@ -61,7 +61,7 @@ const CarouselComponent = ({}) => {
           className="absolute inset-0 w-full h-full"
         >
           <div className="w-full h-full">
-            <PanoramicViewer imageUrl={currentRoom.image} />
+            <PanoramicViewer imageUrl={currentRoom?.image} />
           </div>
         </motion.div>
       </div>
