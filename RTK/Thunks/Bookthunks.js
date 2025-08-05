@@ -20,21 +20,26 @@ export const getAllBook = createAsyncThunk(
 export const postBook = createAsyncThunk(
   'Book/post',
   async (bookingData) => {  
-    // Changed from { formData } to just bookingData
-
     try {
+      console.log('Sending booking data:', bookingData); // Log the data being sent
+      
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/booking`,
-        bookingData,  // Send the booking object directly
+        bookingData,
         {
           headers: {
-            'Content-Type': 'application/json',  // Changed from multipart/form-data
+            'Content-Type': 'application/json',
           },
         }
       );
       return response.data;
     } catch (error) {
-      console.error("Post Book Error", error);
+      console.error("Post Book Error Details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config,
+      });
       throw error;
     }
   }
