@@ -153,7 +153,7 @@ export const getme = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/api/ARZ/user/profile`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ Fixed capitalization (some APIs need "Authorization" instead of "authorization")
+            authorization: `Bearer ${token}`, // ✅ Fixed capitalization (some APIs need "Authorization" instead of "authorization")
           },
         }
       );
