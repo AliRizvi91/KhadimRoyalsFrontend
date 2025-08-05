@@ -11,6 +11,12 @@ const CarouselComponent = ({}) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const dispatch = useDispatch();
 
+  // Function to ensure HTTPS URLs
+  const ensureHttps = (url) => {
+    if (!url) return '';
+    return url.replace(/^http:\/\//i, 'https://');
+  };
+
   // Reset index when rooms change
   useEffect(() => {
     setCurrentIndex(0);
@@ -47,6 +53,7 @@ const CarouselComponent = ({}) => {
   }
 
   const currentRoom = getAllTheRoom[currentIndex];
+  const secureImageUrl = ensureHttps(currentRoom?.image);
 
   return (
     <div className="relative w-full flex flex-col justify-center items-center mb-20">
@@ -61,7 +68,7 @@ const CarouselComponent = ({}) => {
           className="absolute inset-0 w-full h-full"
         >
           <div className="w-full h-full">
-            <PanoramicViewer imageUrl={currentRoom?.image} />
+            <PanoramicViewer imageUrl={secureImageUrl} />
           </div>
         </motion.div>
       </div>
