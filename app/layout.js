@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
             dir="ltr"
             className={`${manrope.variable} ${melodrama.variable}`}
         >
-            <body className="min-h-screen flex flex-col">
+            <body className="min-h-screen flex flex-col overflow-x-hidden">
                 {children}
             </body>
         </html>
