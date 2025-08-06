@@ -1,83 +1,79 @@
 import { io } from 'socket.io-client';
 
 let socket = null;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 export const initializeSocket = (userId) => {
-  if (socket?.connected) return socket;
+  if (socket?.connected) {
+    return socket;
+  }
 
   if (!userId || !process.env.NEXT_PUBLIC_BACKEND_BASEURL) {
-    console.error('Socket initialization failed - missing userId or backend URL');
+    console.error('Socket initialization failed - missing requirements');
     return null;
   }
 
-  // Ensure the backend URL doesn't have a trailing slash
+  // Clean the backend URL
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASEURL.replace(/\/$/, '');
-
+  
+  // Initialize socket with explicit configuration
   socket = io(backendUrl, {
-    withCredentials: true,
+    path: '/api/socket.io',
     query: { userId },
-    path: '/socket.io', // Must match backend path (no trailing slash)
     transports: ['websocket', 'polling'],
     reconnection: true,
-    reconnectionAttempts: Infinity,
+    reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    autoConnect: true,
+    timeout: 20000,
     forceNew: true,
+    withCredentials: true,
+    autoConnect: true,
     upgrade: true,
-    secure: true,
-    rejectUnauthorized: false // Only for development if using self-signed certs
+    secure: process.env.NODE_ENV === 'production',
+    rejectUnauthorized: false
   });
 
-  // Event handlers
+  // Connection events
   socket.on('connect', () => {
-    console.log('Socket connected with ID:', socket.id);
+    console.log('Socket connected:', socket.id);
+    reconnectAttempts = 0;
   });
 
-  socket.on('connect_error', (err) => {
-    console.error('Socket connection error:', err.message);
-    // Attempt reconnection
-    setTimeout(() => {
-      socket.connect();
-    }, 5000);
+  socket.on('connect_error', (error) => {
+    console.error('Connection error:', error.message);
+    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+      const delay = Math.min(5000, 1000 * Math.pow(2, reconnectAttempts));
+      setTimeout(() => {
+        socket.connect();
+        reconnectAttempts++;
+      }, delay);
+    }
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('Socket disconnected:', reason);
+    console.log('Disconnected:', reason);
     if (reason === 'io server disconnect') {
-      // Try to reconnect if server disconnects us
       socket.connect();
     }
   });
 
-  socket.on('error', (err) => {
-    console.error('Socket error:', err);
-  });
-
-  return socket;
-};
-
-export const getSocket = () => {
-  if (!socket) {
-    console.warn('Socket not initialized - call initializeSocket first');
-  }
   return socket;
 };
 
 export const disconnectSocket = () => {
   if (socket) {
-    socket.off(); // Remove all listeners
+    socket.removeAllListeners();
     socket.disconnect();
     socket = null;
-    console.log('Socket disconnected and cleared');
   }
 };
 
-// Optional: Auto-reconnect when coming back online
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => {
-    if (socket && !socket.connected) {
-      socket.connect();
-    }
-  });
-}
+// Utility function to get socket instance
+export const getSocket = () => {
+  if (!socket) {
+    console.warn('Socket not initialized');
+  }
+  return socket;
+};
