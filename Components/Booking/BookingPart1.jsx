@@ -53,14 +53,43 @@ function BookingPart1() {
         startDate: urlParams.startDate,
         endDate: urlParams.endDate,
         roomId: urlParams.roomId || '',
-        totalAmount: urlParams.roomAmount,
+        totalAmount: urlParams.roomAmount ? Number(urlParams.roomAmount) : null,
         userId: user?._id || ''
       }));
       setCommingCategoryId(urlParams.categoryId);
     }
   }, [urlParams, user?._id]);
 
-  // ... [keep all other existing functions unchanged until handleSubmit]
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setBooking(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleNumberChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setBooking(prev => ({ ...prev, [name]: Number(value) }));
+  }, []);
+
+  const validateBooking = useCallback(async () => {
+    if (!booking.startDate || !booking.endDate) {
+      toast.error('Please select both start and end dates');
+      return false;
+    }
+    if (!booking.guests || booking.guests < 1) {
+      toast.error('Please enter a valid number of guests');
+      return false;
+    }
+    return true;
+  }, [booking]);
+
+  const playNotificationSound = useCallback(async () => {
+    try {
+      const sound = new Audio('/sounds/notification.mp3');
+      await sound.play();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,16 +102,15 @@ function BookingPart1() {
         return;
       }
 
-      if(user !== null){
+      if (user) {
         const loadingToast = toast.loading('Processing Booking...', {
           description: 'This may take a few seconds.',
           duration: Infinity,
         });
         
-        // Ensure we're making a POST request with the correct URL
         const resultAction = await dispatch(postBook({
           ...booking,
-          baseUrl // Pass the base URL to your thunk
+          baseUrl
         }));
         
         if (postBook.fulfilled.match(resultAction)) {
@@ -94,12 +122,12 @@ function BookingPart1() {
           throw new Error(resultAction.error?.message || 'Booking failed');
         }
       } else {
-        toast.error('🔒 Please login to continue')
+        toast.error('🔒 Please login to continue');
+        setIsLoading(false);
         return;
       }
     } catch (error) {
       await playNotificationSound();
-      toast.dismiss(toast.loading());
       toast.error('Booking Error', {
         description: error.message || 'Please check your information and try again.',
         duration: 8000,
@@ -164,13 +192,13 @@ function BookingPart1() {
 }
 
 // Extracted components for better readability and reusability
-const DateDisplay = ({ value }) => (
+const DateDisplay = React.memo(({ value }) => (
   <div className="w-full p-3 py-5 bg-[#0f12100e] rounded-lg border-none text-[#0f1210] outline-none">
     {value}
   </div>
-);
+));
 
-const SubmitButton = ({ isLoading }) => (
+const SubmitButton = React.memo(({ isLoading }) => (
   <motion.button
     initial={{ background: '#0f1210', scale: 1 }}
     whileHover={{ background: '#0f1210ec' }}
@@ -180,9 +208,9 @@ const SubmitButton = ({ isLoading }) => (
     className="w-full py-4 px-6 mb-7 text-white rounded-lg font-semibold cursor-pointer"
     disabled={isLoading}
   >
-    {isLoading ? <AnimatedProcessingText Text="Processing" /> : 'Booking'}
+    {isLoading ? <AnimatedProcessingText text="Processing" /> : 'Booking'}
   </motion.button>
-);
+));
 
 const InputField = React.memo(({ type, name, value, onChange, placeholder, required, min }) => (
   <input
