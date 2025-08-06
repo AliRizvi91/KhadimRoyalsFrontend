@@ -16,6 +16,7 @@ const initialState = {
   user: null,
   AllUsers: [],
   ModalOfAuth: false,
+  VerifyEmail: false,
   token: getInitialToken(),
   loading: false,
   error: null,
@@ -26,6 +27,9 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    verifyEmail(state,action) {
+      state.VerifyEmail = action.payload;
+      },
     logout(state) {
       state.user = null;
       state.token = null;
@@ -101,7 +105,7 @@ const userSlice = createSlice({
       })
       .addCase(getme.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
       })
       .addCase(getme.rejected, (state, action) => {
         state.loading = false;
@@ -142,5 +146,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, setCredentials, setAuthModal } = userSlice.actions;
+export const { logout, setCredentials, setAuthModal, verifyEmail } = userSlice.actions;
 export default userSlice.reducer;

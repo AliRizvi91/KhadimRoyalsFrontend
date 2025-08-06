@@ -6,23 +6,13 @@ function AuthenticateUser({ children }) {
   const dispatch = useDispatch();
   const { token, user, loading } = useSelector((state) => state.StoreOfUser);
   
-  console.log('getme token',token);
+  
   useEffect(() => {
     // Only run if we have a token but no user data
-    if (token !== "undefined" && !user && !loading) {
+    if (token !== "undefined" && token && !user && !loading) {
       
       dispatch(getme())
-        .unwrap()
-        .then((userData) => {
-          console.log("User loaded:", userData);
-        })
-        .catch((error) => {
-          console.error("Failed to load user:", error.message);
-          if (error.status === 401 || error.status === 402) {
-            // Redirect to login
-            router.push("/login");
-          }
-        });
+        .unwrap();
     }
   }, [dispatch, token]); // Only depend on token and dispatch
 

@@ -7,7 +7,9 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 // RTK
 import { ResendToken, TokenVerification } from '@/RTK/Thunks/UserThunks';
+import { verifyEmail } from '@/RTK/Slices/UserSlice';
 import { useDispatch } from 'react-redux';
+
 // components
 import Loader from '@/Components/Custom/Loader';
 // Utilities
@@ -33,6 +35,7 @@ function VerificationPage() {
         .unwrap()
         .then(() => setVerificationStatus('success'))
         .catch(() => setVerificationStatus('error'));
+
     }
   }, [dispatch, token]);
 

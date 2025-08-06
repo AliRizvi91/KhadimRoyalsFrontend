@@ -5,7 +5,9 @@ import dynamic from 'next/dynamic'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'next/navigation'
 
+
 // Utilities
+import Loader from '../Custom/Loader'
 import FadeDown from '../Utilities/FadeDown'
 const AnimatedText = dynamic(
   () => import('../Utilities/AnimatedText'),
@@ -100,9 +102,9 @@ function Amenities({ ColorChange }) {
 
   // Loading and error states
   if (loading) return (
-    <div className="w-full h-full flex justify-center items-center">
-      <p>Loading amenities...</p>
-    </div>
+    <div className={`flex flex-col justify-center items-center h-[60vh] w-full bg-black `}>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#E8E4D9] mb-8"></div>
+      </div>
   )
 
   if (error) return (

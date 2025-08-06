@@ -10,15 +10,29 @@ import SmoothScroll from '@/Components/Utilities/SmoothScroll';
 import Deco from '@/Components/Home/Deco';
 import Amenities from '@/Components/Home/Amenities';
 import Gallery from '@/Components/Home/Gallery';
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyEmail } from '@/RTK/Slices/UserSlice';
+
 
 export default function Home() {
   const [isGalleryInView, setIsGalleryInView] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const {VerifyEmail} = useSelector((state)=> state.StoreOfUser)
+  const dispatch = useDispatch()
   const galleryRef = useRef(null);
   const isInView = useInView(galleryRef, {
     margin: "0px 0px -20% 0px",
     once: false
   });
+
+  useEffect(() => {
+    if (VerifyEmail) {
+      // Reload the page
+      window.location.reload();
+      // Reset the verifyEmail state
+      dispatch(verifyEmail(false));
+    }
+  }, [VerifyEmail, dispatch]);
 
 
   useEffect(() => {

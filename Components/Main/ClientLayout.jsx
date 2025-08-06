@@ -37,7 +37,7 @@ export default function ClientLayoutHome({ children, params }) {
                         <Loading className="fixed inset-0 z-50 bg-black flex items-center justify-center" />
                     ) : (
 
-                        <div className="transition-opacity duration-200 opacity-100" aria-busy={false}>
+                        <div className="transition-opacity duration-200 opacity-100 z-10" aria-busy={false}>
                             <main className="flex-grow">
                                 {children}
                             </main>
