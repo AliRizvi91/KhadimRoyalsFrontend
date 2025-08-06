@@ -115,12 +115,12 @@ const Navbar = () => {
     <div ref={scope} className="relative">
       <div className={`relative w-full h-fit`}>
         <div className={`fixed top-0 z-50 w-full flex justify-between items-center text-white pb-1 pt-7 px-5 ${isColorBend ? 'mix-blend-difference' : 'text-black bg-[#E8E4D9]'}`}>
-          <Link
-            href="/"
+          <button
+          onClick={()=> {window.location.href='/'}}
             className="uppercase manrope sm:text-3xl text-2xl font-extrabold"
           >
             Khadim<span className='sm:text-[12px] text-[10px]'>Royals</span>.
-          </Link>
+          </button>
 
           <div className="flex items-center sm:gap-3 gap-1">
             <DrawerComponent openButton={<MdTrolley className='w-8 h-8 mx-1 relative top-1' />} isOpen={isOpen} setIsOpen={setIsOpen} />
