@@ -18,7 +18,7 @@ export const initializeSocket = (userId) => {
   socket = io(process.env.NEXT_PUBLIC_BACKEND_BASEURL, {
     withCredentials: true,
     query: { userId },
-    path: '/socket.io/', // Must match backend path
+    path: '/socket.io', // Must match backend path
     transports: ['websocket', 'polling'], // Fallback options
     reconnection: true,
     reconnectionAttempts: 5,
