@@ -3,30 +3,28 @@ import { io } from 'socket.io-client';
 let socket = null;
 
 export const initializeSocket = (userId) => {
-  if (socket?.connected) return socket;
+  // Return existing socket if already connected
+  if (socket?.connected) {
+    return socket;
+  }
 
+  // Only initialize if we have a userId and backend URL
   if (!userId || !process.env.NEXT_PUBLIC_BACKEND_BASEURL) {
     console.error('Socket initialization failed - missing userId or backend URL');
     return null;
   }
 
+  // Initialize new socket connection
   socket = io(process.env.NEXT_PUBLIC_BACKEND_BASEURL, {
     withCredentials: true,
     query: { userId },
-    path: '/socket.io', // Must match backend
-    transports: ['websocket', 'polling'],
+    path: '/socket.io/', // Must match backend path
+    transports: ['websocket', 'polling'], // Fallback options
     reconnection: true,
-    reconnectionAttempts: Infinity,
+    reconnectionAttempts: 5,
     reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    randomizationFactor: 0.5,
-    timeout: 20000,
     autoConnect: true,
-    forceNew: true,
-    upgrade: true,
-    rememberUpgrade: true,
-    secure: true, // For HTTPS
-    rejectUnauthorized: false // Only for development
+    forceNew: true // Important for Vercel deployments
   });
 
   // Event handlers
