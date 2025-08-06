@@ -1,5 +1,5 @@
 "use client";
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -24,18 +24,18 @@ import { getAllBook, deleteBook } from '@/RTK/Thunks/Bookthunks';
 import { setUserBookings } from '@/RTK/Slices/BookSlice';
 
 export default function DrawerComponent({ openButton, isOpen, setIsOpen }) {
-  const [isLoading , setIsLoading]= useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { user } = useSelector((state) => state.StoreOfUser) || {}
   const dispatch = useDispatch();
   const router = useRouter()
   const { currentUserBookings } = useSelector((state) => state.StoreOfBook);
- 
-  
+
+
   useEffect(() => {
     const GetBookings = async () => {
-      await dispatch(getAllBook());
-      if (user?._id) {
-        await dispatch(setUserBookings(user._id));
+      if (user !== null) {
+        await dispatch(getAllBook());
+        await dispatch(setUserBookings(user?._id));
       }
     }
     GetBookings()
@@ -48,12 +48,12 @@ export default function DrawerComponent({ openButton, isOpen, setIsOpen }) {
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
-  
 
- const handleCheckout = async()=>{
-  setIsLoading(true)
-  await router.push('/checkout')
- }
+
+  const handleCheckout = async () => {
+    setIsLoading(true)
+    await router.push('/checkout')
+  }
 
 
 
@@ -166,9 +166,9 @@ export default function DrawerComponent({ openButton, isOpen, setIsOpen }) {
                       BGImage={2}
                       onClick={handleCheckout}
                     >
-                        {isLoading ? (<AnimatedProcessingText Text={`Processing`}/>) : (
-                          <span className={`flex justify-center items-center gap-3 font-semibold`} >CheckOut <GiMoneyStack className={'w-6 h-6'} /></span> 
-                        )}
+                      {isLoading ? (<AnimatedProcessingText Text={`Processing`} />) : (
+                        <span className={`flex justify-center items-center gap-3 font-semibold`} >CheckOut <GiMoneyStack className={'w-6 h-6'} /></span>
+                      )}
                     </BubbleButton>
                   </Link>
                 </div>

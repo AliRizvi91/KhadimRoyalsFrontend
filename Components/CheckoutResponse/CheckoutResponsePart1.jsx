@@ -32,9 +32,11 @@ const CheckoutResponsePart1 = () => {
     if (!user?._id) return;
     
     try {
-      await dispatch(getAllBook());
-      await dispatch(setUserBookings(user._id));
-      setBookingsLoaded(true);
+      if(user !== null){
+        await dispatch(getAllBook());
+        await dispatch(setUserBookings(user._id));
+        setBookingsLoaded(true);
+      }
     } catch (err) {
       console.error("Failed to load bookings:", err);
       toast.error("Failed to load booking information");

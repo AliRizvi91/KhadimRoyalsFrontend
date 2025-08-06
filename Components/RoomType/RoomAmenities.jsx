@@ -35,6 +35,7 @@ const RoomAmenities = ({ title, content, Stars, ClassicId, location, Alert, Mini
   const router = useRouter();
   const pathname = usePathname();
   const [isBooking, setIsBooking] = useState(false);
+  const {user} = useSelector((state)=> state=> state.StoreOfUser)
 
   // Memoized values
   const cleanLocation = useMemo(() => 
@@ -50,8 +51,10 @@ const RoomAmenities = ({ title, content, Stars, ClassicId, location, Alert, Mini
   // Effects
   useEffect(() => {
     dispatch(getAllRoom());
-    dispatch(getAllBook());
-  }, [dispatch]);
+    if(user !== null){
+      dispatch(getAllBook());
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (CarouselState?._id) {
