@@ -5,10 +5,12 @@ import { getme } from '@/RTK/Thunks/UserThunks';
 function AuthenticateUser({ children }) {
   const dispatch = useDispatch();
   const { token, user, loading } = useSelector((state) => state.StoreOfUser);
-
+  
+  console.log('getme token',token);
   useEffect(() => {
     // Only run if we have a token but no user data
-    if (token && !user && !loading) {
+    if (token !== "undefined" && !user && !loading) {
+      
       dispatch(getme())
         .unwrap()
         .then((userData) => {
